@@ -1,3 +1,31 @@
+# VRTK GearVR Test
+This is a project for testing **[Virtual Reality Toolkit (VRTK)](https://github.com/thestonefox/VRTK)** on GearVR (see VRTK description [below, in the next section](#VRTK)).
+
+Minimum Unity version is **Unity 5.5.4**.
+
+Oculus package must be added installing [OculusUtilities](https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/).
+
+You can find instructions [here](Assets/VRTK_GearVR_Test/README.md).
+
+In Assets\VRTK_GearVR_Test here are 4 scenes to be tested with GearVR:
+* object touching and grabbing
+(005_Controller_BasicObjectGrabbing_GearVR)
+* interaction with Unity UI (`034_Controls_InteractingWithUnityUI_GearVR`)
+* controlling movements with GearVR D-Pad (`015_Controller_TouchpadAxisControl_GearVR`)
+* teleport (`044_CameraRig_RestrictedTeleportZones_GearVR`)
+
+Everything here works with the GearVR D-Pad only, it is designed just to
+enable interaction without a gamepad.
+
+**Warning!** Before building on your Android device, you must copy special OSIG file additions (`oculussig_*`)
+ to `Assets/Plugins/Android/Assets/`
+ 
+ <br>
+ <br>
+---
+<br>
+<a name="VRTK"></a>
+
 ![vrtk logo](https://user-images.githubusercontent.com/1029673/29922542-f8ccb81c-8e4d-11e7-8fa3-b8607c550d77.png)
 > ### VRTK - Virtual Reality Toolkit
 > A productive VR Toolkit for rapidly building VR solutions in Unity3d.
