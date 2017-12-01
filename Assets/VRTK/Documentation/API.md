@@ -667,6 +667,17 @@ The GetRotation method returns the current reported rotation of the direction in
 
 The SetMaterialColor method sets the current material colour on the direction indicator.
 
+#### GetControllerEvents/0
+
+  > `public virtual VRTK_ControllerEvents GetControllerEvents()`
+
+ * Parameters
+   * _none_
+ * Returns
+   * `VRTK_ControllerEvents` - The associated Controller Events script.
+
+The GetControllerEvents method returns the associated Controller Events script with the Pointer Direction Indicator script.
+
 ---
 
 ## Radial Menu (VRTK_RadialMenu)
@@ -3163,6 +3174,10 @@ A relationship to a physical VR controller and emits events based on the inputs 
    * `MiddleFingerSense` - The middle finger sense touch is active.
    * `RingFingerSense` - The ring finger sense touch is active.
    * `PinkyFingerSense` - The pinky finger sense touch is active.
+ * `public enum Vector2AxisAlias` - Vector2 Axis Types.
+   * `Undefined` - No axis specified.
+   * `Touchpad` - Touchpad on the controller.
+   * `TouchpadTwo` - Touchpad Two on the controller.
  * `public enum AxisType` - Axis Types
    * `Digital` - A digital axis with a binary result of 0f not pressed or 1f is pressed.
    * `Axis` - An analog axis ranging from no squeeze at 0f to full squeeze at 1f.
@@ -3297,10 +3312,10 @@ The GetControllerType method is a shortcut to retrieve the current controller ty
 
 #### GetAxis/1
 
-  > `public virtual Vector2 GetAxis(SDK_BaseController.Vector2Axis vector2AxisType)`
+  > `public virtual Vector2 GetAxis(Vector2AxisAlias vector2AxisType)`
 
  * Parameters
-   * `SDK_BaseController.Vector2Axis vector2AxisType` - The Vector2AxisType to check the touch position of.
+   * `Vector2AxisAlias vector2AxisType` - The Vector2AxisType to check the touch position of.
  * Returns
    * `Vector2` - A two dimensional vector containing the `x` and `y` position of where the given axis type is being touched. `(0,0)` to `(1,1)`.
 
@@ -3330,10 +3345,10 @@ The GetTouchpadTwoAxis method returns the coordinates of where the touchpad two 
 
 #### GetAxisAngle/1
 
-  > `public virtual float GetAxisAngle(SDK_BaseController.Vector2Axis vector2AxisType)`
+  > `public virtual float GetAxisAngle(Vector2AxisAlias vector2AxisType)`
 
  * Parameters
-   * `SDK_BaseController.Vector2Axis vector2AxisType` - The Vector2AxisType to get the touch angle for.
+   * `Vector2AxisAlias vector2AxisType` - The Vector2AxisType to get the touch angle for.
  * Returns
    * `float` - A float representing the angle of where the given axis type is being touched. `0f` to `360f`.
 
@@ -3473,10 +3488,10 @@ The AnyButtonPressed method returns true if any of the controller buttons are be
 
 #### GetAxisState/2
 
-  > `public virtual bool GetAxisState(SDK_BaseController.Vector2Axis axis, SDK_BaseController.ButtonPressTypes pressType)`
+  > `public virtual bool GetAxisState(Vector2AxisAlias axis, SDK_BaseController.ButtonPressTypes pressType)`
 
  * Parameters
-   * `SDK_BaseController.Vector2Axis axis` - The axis to check on.
+   * `Vector2AxisAlias axis` - The axis to check on.
    * `SDK_BaseController.ButtonPressTypes pressType` - The button press type to check for.
  * Returns
    * `bool` - Returns `true` if the axis is being interacted with via the given press type.
@@ -8236,6 +8251,7 @@ A collection of scripts that provide useful functionality to aid the creation pr
  * [SDK Object Alias](#sdk-object-alias-vrtk_sdkobjectalias)
  * [SDK Transform Modify](#sdk-transform-modify-vrtk_sdktransformmodify)
  * [SDK Object State](#sdk-object-state-vrtk_sdkobjectstate)
+ * [SDK Input Override](#sdk-input-override-vrtk_sdkinputoverride)
  * [Velocity Estimator](#velocity-estimator-vrtk_velocityestimator)
 
 ---
@@ -9771,6 +9787,66 @@ The state can be determined by:
    * _none_
 
 The SetStateByControllerReference method sets the object state based on the controller type of the given controller reference.
+
+---
+
+## SDK Input Override (VRTK_SDKInputOverride)
+ > extends VRTK_SDKControllerReady
+
+### Overview
+
+Provides the ability to switch button mappings based on the current SDK or controller type
+
+**Script Usage:**
+ * Place the `VRTK_PlayerClimb` script on any active scene GameObject.
+
+### Inspector Parameters
+
+ * **Loaded SDK Setup:** An optional SDK Setup to use to determine when to modify the transform.
+ * **Controller Type:** An optional SDK controller type to use to determine when to modify the transform.
+ * **Override Button:** The button to override to.
+ * **Override Axis:** The Vector2 axis to override to.
+ * **Interact Grab Script:** The Interact Grab script to override the controls on.
+ * **Interact Grab Overrides:** The list of overrides.
+ * **Interact Use Script:** The Interact Use script to override the controls on.
+ * **Interact Use Overrides:** The list of overrides.
+ * **Pointer Script:** The Pointer script to override the controls on.
+ * **Pointer Activation Overrides:** The list of overrides for the activation button.
+ * **Pointer Selection Overrides:** The list of overrides for the selection button.
+ * **Ui Pointer Script:** The UI Pointer script to override the controls on.
+ * **Ui Pointer Activation Overrides:** The list of overrides for the activation button.
+ * **Ui Pointer Selection Overrides:** The list of overrides for the selection button.
+ * **Pointer Direction Indicator Script:** The Pointer Direction Indicator script to override the controls on.
+ * **Direction Indicator Coordinate Overrides:** The list of overrides for the coordinate axis.
+ * **Touchpad Control Script:** The Touchpad Control script to override the controls on.
+ * **Touchpad Control Coordinate Overrides:** The list of overrides for the Touchpad Control coordinate axis.
+ * **Touchpad Control Activation Overrides:** The list of overrides for the activation button.
+ * **Touchpad Control Modifier Overrides:** The list of overrides for the modifier button.
+ * **Button Control Script:** The ButtonControl script to override the controls on.
+ * **Button Control Forward Overrides:** The list of overrides for the forward button.
+ * **Button Control Backward Overrides:** The list of overrides for the backward button.
+ * **Button Control Left Overrides:** The list of overrides for the left button.
+ * **Button Control Right Overrides:** The list of overrides for the right button.
+ * **Slingshot Jump Script:** The SlingshotJump script to override the controls on.
+ * **Slingshot Jump Activation Overrides:** The list of overrides for the activation button.
+ * **Slingshot Jump Cancel Overrides:** The list of overrides for the cancel button.
+ * **Move In Place Script:** The MoveInPlace script to override the controls on.
+ * **Move In Place Engage Overrides:** The list of overrides for the engage button.
+ * **Step Multiplier Script:** The Step Multiplier script to override the controls on.
+ * **Step Multiplier Activation Overrides:** The list of overrides for the activation button.
+
+### Class Methods
+
+#### ForceManage/0
+
+  > `public virtual void ForceManage()`
+
+ * Parameters
+   * _none_
+ * Returns
+   * _none_
+
+The ForceManage method forces the inputs to be updated even without an SDK change event occuring.
 
 ---
 

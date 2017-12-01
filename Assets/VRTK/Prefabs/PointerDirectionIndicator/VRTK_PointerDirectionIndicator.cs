@@ -41,7 +41,7 @@ namespace VRTK
         [Tooltip("The touchpad axis needs to be above this deadzone for it to register as a valid touchpad angle.")]
         public Vector2 touchpadDeadzone = Vector2.zero;
         [Tooltip("The axis to use for the direction coordinates.")]
-        public SDK_BaseController.Vector2Axis coordinateAxis = SDK_BaseController.Vector2Axis.Touchpad;
+        public VRTK_ControllerEvents.Vector2AxisAlias coordinateAxis = VRTK_ControllerEvents.Vector2AxisAlias.Touchpad;
 
         [Header("Appearance Settings")]
 
@@ -127,6 +127,15 @@ namespace VRTK
                     renderers[i].material.color = color;
                 }
             }
+        }
+
+        /// <summary>
+        /// The GetControllerEvents method returns the associated Controller Events script with the Pointer Direction Indicator script.
+        /// </summary>
+        /// <returns>The associated Controller Events script.</returns>
+        public virtual VRTK_ControllerEvents GetControllerEvents()
+        {
+            return controllerEvents;
         }
 
         protected virtual void Awake()
