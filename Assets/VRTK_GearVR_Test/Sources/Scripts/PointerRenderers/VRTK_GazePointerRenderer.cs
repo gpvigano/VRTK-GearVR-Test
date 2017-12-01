@@ -1,5 +1,4 @@
-﻿// Gaze Pointer Renderer|PointerRenderers|10040
-namespace VRTK
+﻿namespace VRTK
 {
     using System;
     using UnityEngine;
@@ -57,17 +56,6 @@ namespace VRTK
             base.UpdateRenderer();
         }
 
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-            // workaround for enabling the pointer when activateOnEnable is set
-            // TODO: check this
-            if (controllingPointer && controllingPointer.enabled)
-            {
-                controllingPointer.enabled = false;
-                controllingPointer.enabled = true;
-            }
-        }
         protected override void ToggleRenderer(bool pointerState, bool actualState)
         {
             ToggleElement(actualCursor, pointerState, actualState, cursorVisibility, ref cursorVisible);

@@ -10,6 +10,15 @@ public class ConfigurableSceneChanger : MonoBehaviour
     private bool canPress;
     private VRTK_ControllerReference controllerReference;
 
+    public void Exit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
+
     private void Awake()
     {
         canPress = false;
@@ -35,15 +44,6 @@ public class ConfigurableSceneChanger : MonoBehaviour
     private void ResetPress()
     {
         canPress = true;
-    }
-
-    private void Exit()
-    {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
     }
 
     private void Update()
