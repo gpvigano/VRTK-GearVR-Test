@@ -1,5 +1,11 @@
 # VRTK GearVR Test
-This is a project for testing **[Virtual Reality Toolkit (VRTK)](https://github.com/thestonefox/VRTK)** on GearVR (see VRTK description [below, in the next section](#VRTK)).
+This is a repository for testing **[Virtual Reality Toolkit (VRTK)](https://github.com/thestonefox/VRTK)** on GearVR (see VRTK description [below, in the next section](#VRTK)).
+
+**This is a totally separate repository and isn't representative of any work currently being carried out on VRTK, even if periodically the work done in VRTK is merged (and tested) into this repository.**
+
+Everything here **works with the GearVR D-Pad only**, it is designed just to
+enable a **gaze-based interaction** without a gamepad or controller.
+If using a controller you probably don't need this: the GearVR controller can work with VRTK (see this video by @thestonefox <https://github.com/thestonefox> [ https://www.youtube.com/watch?v=ma2AetALN_k]), it is mapped on *Touchpad*.  
 
 Minimum Unity version is **5.5.4**.
 
@@ -14,15 +20,12 @@ In Assets\VRTK_GearVR_Test here are 5 scenes to be tested with GearVR:
 * controlling movements with GearVR D-Pad (`015_Controller_TouchpadAxisControl_GearVR`)
 * teleport (`044_CameraRig_RestrictedTeleportZones_GearVR`)
 
-Everything here works with the GearVR D-Pad only, it is designed just to
-enable interaction without a gamepad.
-
-**Warning!** Before building on your Android device, you must copy special OSIG file additions (`oculussig_*`)
+**Note:** Before building on your Android device, you must copy special OSIG file additions (`oculussig_*`)
  to `Assets/Plugins/Android/Assets/`
  
  <br>
  <br>
-___
+____
 <br>
 <a name="VRTK"></a>
 
