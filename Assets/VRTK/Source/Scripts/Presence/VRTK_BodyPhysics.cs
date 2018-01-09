@@ -393,7 +393,7 @@ namespace VRTK
         public virtual void ResetIgnoredCollisions()
         {
             //Go through all the existing set up ignored colliders and reset their collision state
-            foreach (GameObject ignoreCollisionsOnGameObject in ignoreCollisionsOnGameObjects)
+            foreach (GameObject ignoreCollisionsOnGameObject in new HashSet<GameObject>(ignoreCollisionsOnGameObjects))
             {
                 if (ignoreCollisionsOnGameObject != null)
                 {
@@ -424,7 +424,7 @@ namespace VRTK
 
         protected virtual void Awake()
         {
-            VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptAddBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected override void OnEnable()
@@ -450,7 +450,7 @@ namespace VRTK
 
         protected virtual void OnDestroy()
         {
-            VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptRemoveBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void FixedUpdate()
@@ -940,8 +940,14 @@ namespace VRTK
 
         protected virtual void ManagePhysicsCollider(Collider collider, bool state)
         {
-            Physics.IgnoreCollision(bodyCollider, collider, state);
-            Physics.IgnoreCollision(footCollider, collider, state);
+            if (bodyCollider != null)
+            {
+                Physics.IgnoreCollision(bodyCollider, collider, state);
+            }
+            if (footCollider != null)
+            {
+                Physics.IgnoreCollision(footCollider, collider, state);
+            }
         }
 
         protected virtual void CheckStepUpCollision(Collision collision)

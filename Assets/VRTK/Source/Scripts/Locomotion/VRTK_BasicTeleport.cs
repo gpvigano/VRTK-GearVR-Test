@@ -48,6 +48,8 @@ namespace VRTK
         [Tooltip("An optional NavMeshData object that will be utilised for limiting the teleport to within any scene NavMesh.")]
         public VRTK_NavMeshData navMeshData;
 
+        [Header("Obsolete Settings")]
+
         [System.Obsolete("`VRTK_BasicTeleport.navMeshLimitDistance` is no longer used, use `VRTK_BasicTeleport.processNavMesh` instead. This parameter will be removed in a future version of VRTK.")]
         [ObsoleteInspector]
         public float navMeshLimitDistance = 0f;
@@ -212,7 +214,7 @@ namespace VRTK
 
         protected virtual void Awake()
         {
-            VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptAddBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void OnEnable()
@@ -239,7 +241,7 @@ namespace VRTK
 
         protected virtual void OnDestroy()
         {
-            VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptRemoveBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void Blink(float transitionSpeed)

@@ -254,12 +254,13 @@ namespace VRTK
 
         protected virtual void Awake()
         {
-            VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptAddBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void OnEnable()
         {
             destroyColliderOnDisable = false;
+            controllerCollisionDetector = (customColliderContainer != null ? customColliderContainer : controllerCollisionDetector);
             VRTK_PlayerObject.SetPlayerObject(gameObject, VRTK_PlayerObject.ObjectTypes.Controller);
             CreateTouchRigidBody();
             trackedController = GetComponentInParent<VRTK_TrackedController>();
@@ -281,7 +282,7 @@ namespace VRTK
 
         protected virtual void OnDestroy()
         {
-            VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptRemoveBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void OnTriggerEnter(Collider collider)

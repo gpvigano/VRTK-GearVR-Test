@@ -65,6 +65,8 @@ namespace VRTK
         [Tooltip("A custom transform to use as the origin of the pointer. If no pointer origin transform is provided then the transform the script is attached to is used.")]
         public Transform customOrigin;
 
+        [Header("Obsolete Settings")]
+
         [System.Obsolete("`VRTK_Pointer.controller` has been replaced with `VRTK_Pointer.controllerEvents`. This parameter will be removed in a future version of VRTK.")]
         [ObsoleteInspector]
         public VRTK_ControllerEvents controller;
@@ -290,7 +292,7 @@ namespace VRTK
 
         protected virtual void Awake()
         {
-            VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptAddBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected override void OnEnable()
@@ -300,7 +302,10 @@ namespace VRTK
 #pragma warning restore 0618
             base.OnEnable();
             attachedTo = (attachedTo == null ? gameObject : attachedTo);
-            VRTK_PlayerObject.SetPlayerObject(gameObject, VRTK_PlayerObject.ObjectTypes.Pointer);
+            if (!VRTK_PlayerObject.IsPlayerObject(gameObject))
+            {
+                VRTK_PlayerObject.SetPlayerObject(gameObject, VRTK_PlayerObject.ObjectTypes.Pointer);
+            }
             SetDefaultValues();
 
             if (NoPointerRenderer())
@@ -327,7 +332,7 @@ namespace VRTK
 
         protected virtual void OnDestroy()
         {
-            VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptRemoveBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void Update()
@@ -389,7 +394,7 @@ namespace VRTK
 
         protected virtual Quaternion? GetCursorRotation()
         {
-            if (EnabledPointerRenderer() && pointerRenderer.directionIndicator != null)
+            if (EnabledPointerRenderer() && pointerRenderer.directionIndicator != null && pointerRenderer.directionIndicator.gameObject.activeInHierarchy)
             {
                 return pointerRenderer.directionIndicator.GetRotation();
             }
@@ -549,26 +554,36 @@ namespace VRTK
             }
         }
 
-        protected virtual void DoActivationButtonPressed(object sender, ControllerInteractionEventArgs e)
+        protected virtual void PointerActivated()
         {
-            OnActivationButtonPressed(controllerEvents.SetControllerEvent(ref activationButtonPressed, true));
             if (EnabledPointerRenderer())
             {
-                controllerReference = e.controllerReference;
                 Toggle(true);
             }
         }
 
-        protected virtual void DoActivationButtonReleased(object sender, ControllerInteractionEventArgs e)
+        protected virtual void PointerDeactivated()
         {
             if (EnabledPointerRenderer())
             {
-                controllerReference = e.controllerReference;
                 if (IsPointerActive())
                 {
                     Toggle(false);
                 }
             }
+        }
+
+        protected virtual void DoActivationButtonPressed(object sender, ControllerInteractionEventArgs e)
+        {
+            controllerReference = e.controllerReference;
+            OnActivationButtonPressed(controllerEvents.SetControllerEvent(ref activationButtonPressed, true));
+            PointerActivated();
+        }
+
+        protected virtual void DoActivationButtonReleased(object sender, ControllerInteractionEventArgs e)
+        {
+            controllerReference = e.controllerReference;
+            PointerDeactivated();
             OnActivationButtonReleased(controllerEvents.SetControllerEvent(ref activationButtonPressed, false));
         }
 

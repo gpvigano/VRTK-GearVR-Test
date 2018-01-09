@@ -198,7 +198,7 @@ namespace VRTK
                         headsetOutOfBounds = false;
                     }
                 }
-                playAreaCursor.transform.rotation = (directionIndicator != null ? directionIndicator.transform.rotation : playArea.rotation);
+                playAreaCursor.transform.rotation = (directionIndicator != null && directionIndicator.gameObject.activeInHierarchy ? directionIndicator.transform.rotation : playArea.rotation);
                 playAreaCursor.transform.position = location + offset;
             }
         }
@@ -256,7 +256,7 @@ namespace VRTK
 
         protected virtual void Awake()
         {
-            VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptAddBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void OnEnable()
@@ -279,7 +279,7 @@ namespace VRTK
 
         protected virtual void OnDestroy()
         {
-            VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
+            VRTK_SDKManager.AttemptRemoveBehaviourToToggleOnLoadedSetupChange(this);
         }
 
         protected virtual void Update()

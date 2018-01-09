@@ -6452,27 +6452,27 @@ The AtMinLimit method returns whether the Controllable is currently at it's mini
 
 The AtMaxLimit method returns whether the Controllable is currently at it's maximum limit.
 
-#### GetOriginalPosition/1
+#### GetOriginalLocalPosition/0
 
-  > `public virtual Vector3 GetOriginalPosition(bool useLocal = false)`
-
- * Parameters
-   * `bool useLocal` - If `true` the the original local position will be returned.
- * Returns
-   * `Vector3` -
-
-The GetOriginalPosition method returns the original position of the control.
-
-#### GetOriginalRotation/1
-
-  > `public virtual Quaternion GetOriginalRotation(bool useLocal = false)`
+  > `public virtual Vector3 GetOriginalLocalPosition()`
 
  * Parameters
-   * `bool useLocal` - If `true` the the original local rotation will be returned.
+   * _none_
  * Returns
-   * `Quaternion` -
+   * `Vector3` - A Vector3 of the original local position.
 
-The GetOriginalRotation method returns the original rotation of the control.
+The GetOriginalLocalPosition method returns the original local position of the control.
+
+#### GetOriginalLocalRotation/0
+
+  > `public virtual Quaternion GetOriginalLocalRotation()`
+
+ * Parameters
+   * _none_
+ * Returns
+   * `Quaternion` - A quaternion of the original local rotation.
+
+The GetOriginalLocalRotation method returns the original local rotation of the control.
 
 #### GetControlColliders/0
 
@@ -6572,10 +6572,13 @@ A physics based pushable pusher.
  * `Rigidbody` - A Unity Rigidbody to allow the GameObject to be affected by the Unity Physics System. Will be automatically added at runtime.
 
 **Optional Components:**
- * `VRTK_ControllerRigidbodyActivator` - A Controller Rigidbody Activator to automatically enable the controller rigidbody upon touching the pusher. Will be automatically created if the `Auto Interaction` paramter is checked.
+ * `VRTK_ControllerRigidbodyActivator` - A Controller Rigidbody Activator to automatically enable the controller rigidbody upon touching the pusher.
 
 **Script Usage:**
+ * Create a pusher container GameObject and set the GameObject that is to become the pusher as a child of the newly created container GameObject.
  * Place the `VRTK_PhysicsPusher` script onto the GameObject that is to become the pusher.
+
+  > The Physics Pusher script must not be on a root level GameObject. Any runtime world positioning of the pusher must be set on the parent container GameObject.
 
 ### Inspector Parameters
 
@@ -6647,7 +6650,7 @@ A physics based rotatable object.
  * `Rigidbody` - A Unity Rigidbody to allow the GameObject to be affected by the Unity Physics System. Will be automatically added at runtime.
 
 **Optional Components:**
- * `VRTK_ControllerRigidbodyActivator` - A Controller Rigidbody Activator to automatically enable the controller rigidbody when near the rotator. Will be automatically created if the `Auto Interaction` paramter is checked.
+ * `VRTK_ControllerRigidbodyActivator` - A Controller Rigidbody Activator to automatically enable the controller rigidbody when near the rotator.
 
 **Script Usage:**
  * Create a rotator container GameObject and set the GameObject that is to become the rotator as a child of the newly created container GameObject.
@@ -6800,7 +6803,7 @@ A physics based slider.
  * `Rigidbody` - A Unity Rigidbody to allow the GameObject to be affected by the Unity Physics System. Will be automatically added at runtime.
 
 **Optional Components:**
- * `VRTK_ControllerRigidbodyActivator` - A Controller Rigidbody Activator to automatically enable the controller rigidbody when near the slider. Will be automatically created if the `Auto Interaction` paramter is checked.
+ * `VRTK_ControllerRigidbodyActivator` - A Controller Rigidbody Activator to automatically enable the controller rigidbody when near the slider.
 
 **Script Usage:**
  * Create a slider container GameObject and set the GameObject that is to become the slider as a child of the container.
@@ -7488,6 +7491,7 @@ Initiates a fade of the headset view when a headset collision event is detected.
  * **Time Till Fade:** The amount of time to wait until a fade occurs.
  * **Blink Transition Speed:** The fade blink speed on collision.
  * **Fade Color:** The colour to fade the headset to on collision.
+ * **Target List Policy:** A specified VRTK_PolicyList to use to determine whether any objects will be acted upon by the Headset Collision Fade.
  * **Headset Collision:** The VRTK Headset Collision script to use when determining headset collisions. If this is left blank then the script will need to be applied to the same GameObject.
  * **Headset Fade:** The VRTK Headset Fade script to use when fading the headset. If this is left blank then the script will need to be applied to the same GameObject.
 
@@ -8287,6 +8291,7 @@ A helper class that simply holds references to both the SDK_ScriptingDefineSymbo
  * `public static ReadOnlyCollection<VRTK_SDKInfo> InstalledHeadsetSDKInfos { get private set }` - All installed headset SDK infos. This is a subset of `AvailableHeadsetSDKInfos`. It contains only those available SDK infos for which an SDK_ScriptingDefineSymbolPredicateAttribute exists that uses the same symbol and whose associated method returns true.
  * `public static ReadOnlyCollection<VRTK_SDKInfo> InstalledControllerSDKInfos { get private set }` - All installed controller SDK infos. This is a subset of `AvailableControllerSDKInfos`. It contains only those available SDK infos for which an SDK_ScriptingDefineSymbolPredicateAttribute exists that uses the same symbol and whose associated method returns true.
  * `public static VRTK_SDKManager instance` - The singleton instance to access the SDK Manager variables from.
+ * `public static HashSet<Behaviour> delayedToggleBehaviours` - A collection of behaviours to toggle on loaded setup change. Default: `new HashSet<Behaviour>()`
  * `public List<SDK_ScriptingDefineSymbolPredicateAttribute> activeScriptingDefineSymbolsWithoutSDKClasses` - The active (i.e. to be added to the PlayerSettings) scripting define symbol predicate attributes that have no associated SDK classes. Default: `new List<SDK_ScriptingDefineSymbolPredicateAttribute>()`
  * `public VRTK_SDKSetup loadedSetup` - The loaded SDK Setup. `null` if no setup is currently loaded.
  * `public ReadOnlyCollection<Behaviour> behavioursToToggleOnLoadedSetupChange { get private set }` - All behaviours that need toggling whenever `loadedSetup` changes.
@@ -8321,6 +8326,129 @@ Adding the `VRTK_SDKManager_UnityEvents` component to `VRTK_SDKManager` object a
 
 Event Payload. Constructs a new instance with the specified predicate attribute and associated method info.
 
+#### ValidInstance/0
+
+  > `public static bool ValidInstance()`
+
+ * Parameters
+   * _none_
+ * Returns
+   * `bool` - Returns `true` if the SDK Manager instance is valid or returns `false` if it is null.
+
+The ValidInstance method returns whether the SDK Manager isntance is valid (i.e. it's not null).
+
+#### AttemptAddBehaviourToToggleOnLoadedSetupChange/1
+
+  > `public static bool AttemptAddBehaviourToToggleOnLoadedSetupChange(Behaviour givenBehaviour)`
+
+ * Parameters
+   * `Behaviour givenBehaviour` - The behaviour to add.
+ * Returns
+   * `bool` - Returns `true` if the SDK Manager instance was valid.
+
+The AttemptAddBehaviourToToggleOnLoadedSetupChange method will attempt to add the given behaviour to the loaded setup change toggle if the SDK Manager instance exists. If it doesn't exist then it adds it to the `delayedToggleBehaviours` HashSet to be manually added later with the `ProcessDelayedToggleBehaviours` method.
+
+#### AttemptRemoveBehaviourToToggleOnLoadedSetupChange/1
+
+  > `public static bool AttemptRemoveBehaviourToToggleOnLoadedSetupChange(Behaviour givenBehaviour)`
+
+ * Parameters
+   * `Behaviour givenBehaviour` - The behaviour to remove.
+ * Returns
+   * `bool` - Returns `true` if the SDK Manager instance was valid.
+
+The AttemptRemoveBehaviourToToggleOnLoadedSetupChange method will attempt to remove the given behaviour from the loaded setup change toggle if the SDK Manager instance exists.
+
+#### ProcessDelayedToggleBehaviours/0
+
+  > `public static void ProcessDelayedToggleBehaviours()`
+
+ * Parameters
+   * _none_
+ * Returns
+   * _none_
+
+The ProcessDelayedToggleBehaviours method will attempt to addd the behaviours in the `delayedToggleBehaviours` HashSet to the loaded setup change toggle.
+
+#### SubscribeLoadedSetupChanged/1
+
+  > `public static bool SubscribeLoadedSetupChanged(LoadedSetupChangeEventHandler callback)`
+
+ * Parameters
+   * `LoadedSetupChangeEventHandler callback` - The callback to register.
+ * Returns
+   * `bool` - Returns `true` if the SDK Manager instance was valid.
+
+The SubscribeLoadedSetupChanged method attempts to register the given callback with the `LoadedSetupChanged` event.
+
+#### UnsubscribeLoadedSetupChanged/1
+
+  > `public static bool UnsubscribeLoadedSetupChanged(LoadedSetupChangeEventHandler callback)`
+
+ * Parameters
+   * `LoadedSetupChangeEventHandler callback` - The callback to unregister.
+ * Returns
+   * `bool` - Returns `true` if the SDK Manager instance was valid.
+
+The UnsubscribeLoadedSetupChanged method attempts to unregister the given callback from the `LoadedSetupChanged` event.
+
+#### GetLoadedSDKSetup/0
+
+  > `public static VRTK_SDKSetup GetLoadedSDKSetup()`
+
+ * Parameters
+   * _none_
+ * Returns
+   * `VRTK_SDKSetup` - Returns `true` if the SDK Manager instance was valid.
+
+The GetLoadedSDKSetup method returns the current loaded SDK Setup for the SDK Manager instance.
+
+#### GetAllSDKSetups/0
+
+  > `public static VRTK_SDKSetup[] GetAllSDKSetups()`
+
+ * Parameters
+   * _none_
+ * Returns
+   * `VRTK_SDKSetup[]` - An SDKSetup array of all valid SDK Setups for the current SDK Manager instance. If no SDK Manager instance is found then an empty array is returned.
+
+The GetAllSDKSetups method returns all valid SDK Setups attached to the SDK Manager instance.
+
+#### AttemptTryLoadSDKSetup/3
+
+  > `public static bool AttemptTryLoadSDKSetup(int startIndex, bool tryToReinitialize, params VRTK_SDKSetup[] sdkSetups)`
+
+ * Parameters
+   * `int startIndex` - The index of the VRTK_SDKSetup to start the loading with.
+   * `bool tryToReinitialize` - Whether or not to retry initializing and using the currently set but unusable VR Device.
+   * `params VRTK_SDKSetup[] sdkSetups` - The list to try to load a VRTK_SDKSetup from.
+ * Returns
+   * `bool` - Returns `true` if the SDK Manager instance was valid.
+
+The AttemptTryLoadSDKSetup method attempts to load a valid VRTK_SDKSetup from a list if the SDK Manager instance is valid.
+
+#### AttemptTryLoadSDKSetupFromList/1
+
+  > `public static bool AttemptTryLoadSDKSetupFromList(bool tryUseLastLoadedSetup = true)`
+
+ * Parameters
+   * `bool tryUseLastLoadedSetup` - Attempt to use the last loaded setup if it's available.
+ * Returns
+   * `bool` - Returns `true` if the SDK Manager instance was valid.
+
+The AttemptUnloadSDKSetup method tries to load a valid VRTK_SDKSetup from setups if the SDK Manager instance is valid.
+
+#### AttemptUnloadSDKSetup/1
+
+  > `public static bool AttemptUnloadSDKSetup(bool disableVR = false)`
+
+ * Parameters
+   * `bool disableVR` - Whether to disable VR altogether after unloading the SDK Setup.
+ * Returns
+   * `bool` - Returns `true` if the SDK Manager instance was valid.
+
+The AttemptUnloadSDKSetup method attempts to unload the currently loaded VRTK_SDKSetup, if there is one and if the SDK Manager instance is valid.
+
 #### ManageScriptingDefineSymbols/2
 
   > `public bool ManageScriptingDefineSymbols(bool ignoreAutoManageScriptDefines, bool ignoreIsActiveAndEnabled)`
@@ -8331,7 +8459,7 @@ Event Payload. Constructs a new instance with the specified predicate attribute 
  * Returns
    * `bool` - Whether the PlayerSettings' scripting define symbols were changed.
 
-Manages (i.e. adds and removes) the scripting define symbols of the PlayerSettings for the currently set SDK infos. This method is only available in the editor, so usage of the method needs to be surrounded by `#if UNITY_EDITOR` and `#endif` when used in a type that is also compiled for a standalone build.
+The ManageScriptingDefineSymbols method manages (i.e. adds and removes) the scripting define symbols of the PlayerSettings for the currently set SDK infos. This method is only available in the editor, so usage of the method needs to be surrounded by `#if UNITY_EDITOR` and `#endif` when used in a type that is also compiled for a standalone build.
 
 #### ManageVRSettings/1
 
@@ -8342,7 +8470,7 @@ Manages (i.e. adds and removes) the scripting define symbols of the PlayerSettin
  * Returns
    * _none_
 
-Manages (i.e. adds and removes) the VR SDKs of the PlayerSettings for the currently set SDK infos. This method is only available in the editor, so usage of the method needs to be surrounded by `#if UNITY_EDITOR` and `#endif` when used in a type that is also compiled for a standalone build.
+The ManageVRSettings method manages (i.e. adds and removes) the VR SDKs of the PlayerSettings for the currently set SDK infos. This method is only available in the editor, so usage of the method needs to be surrounded by `#if UNITY_EDITOR` and `#endif` when used in a type that is also compiled for a standalone build.
 
 #### AddBehaviourToToggleOnLoadedSetupChange/1
 
@@ -8353,7 +8481,7 @@ Manages (i.e. adds and removes) the VR SDKs of the PlayerSettings for the curren
  * Returns
    * _none_
 
-Adds a behaviour to the list of behaviours to toggle when `loadedSetup` changes.
+The AddBehaviourToToggleOnLoadedSetupChange method adds a behaviour to the list of behaviours to toggle when `loadedSetup` changes.
 
 #### RemoveBehaviourToToggleOnLoadedSetupChange/1
 
@@ -8364,18 +8492,18 @@ Adds a behaviour to the list of behaviours to toggle when `loadedSetup` changes.
  * Returns
    * _none_
 
-Removes a behaviour of the list of behaviours to toggle when `loadedSetup` changes.
+The RemoveBehaviourToToggleOnLoadedSetupChange method removes a behaviour of the list of behaviours to toggle when `loadedSetup` changes.
 
 #### TryLoadSDKSetupFromList/1
 
   > `public void TryLoadSDKSetupFromList(bool tryUseLastLoadedSetup = true)`
 
  * Parameters
-   * _none_
+   * `bool tryUseLastLoadedSetup` - Attempt to use the last loaded setup if it's available.
  * Returns
    * _none_
 
-Tries to load a valid VRTK_SDKSetup from setups.
+The TryLoadSDKSetupFromList method tries to load a valid VRTK_SDKSetup from setups.
 
 #### TryLoadSDKSetup/3
 
@@ -8388,7 +8516,7 @@ Tries to load a valid VRTK_SDKSetup from setups.
  * Returns
    * _none_
 
-Tries to load a valid VRTK_SDKSetup from a list. The first loadable VRTK_SDKSetup in the list will be loaded. Will fall back to disable VR if none of the provided Setups is useable.
+The TryLoadSDKSetup method tries to load a valid VRTK_SDKSetup from a list. The first loadable VRTK_SDKSetup in the list will be loaded. Will fall back to disable VR if none of the provided Setups is useable.
 
 #### SetLoadedSDKSetupToPopulateObjectReferences/1
 
@@ -8399,7 +8527,7 @@ Tries to load a valid VRTK_SDKSetup from a list. The first loadable VRTK_SDKSetu
  * Returns
    * _none_
 
-Sets a given VRTK_SDKSetup as the loaded SDK Setup to be able to use it when populating object references in the SDK Setup. This method should only be called when not playing as it's only for populating the object references. This method is only available in the editor, so usage of the method needs to be surrounded by `#if UNITY_EDITOR` and `#endif` when used in a type that is also compiled for a standalone build.
+The SetLoadedSDKSetupToPopulateObjectReferences method sets a given VRTK_SDKSetup as the loaded SDK Setup to be able to use it when populating object references in the SDK Setup. This method should only be called when not playing as it's only for populating the object references. This method is only available in the editor, so usage of the method needs to be surrounded by `#if UNITY_EDITOR` and `#endif` when used in a type that is also compiled for a standalone build.
 
 #### UnloadSDKSetup/1
 
@@ -8410,7 +8538,7 @@ Sets a given VRTK_SDKSetup as the loaded SDK Setup to be able to use it when pop
  * Returns
    * _none_
 
-Unloads the currently loaded VRTK_SDKSetup, if there is one.
+The UnloadSDKSetup method unloads the currently loaded VRTK_SDKSetup, if there is one.
 
 ---
 
@@ -8460,7 +8588,7 @@ Adding the `VRTK_SDKSetup_UnityEvents` component to `VRTK_SDKSetup` object allow
  * Returns
    * _none_
 
-Populates the object references by using the currently set SDKs.
+The PopulateObjectReferences method populates the object references by using the currently set SDKs.
 
 #### GetSimplifiedErrorDescriptions/0
 
@@ -8471,7 +8599,29 @@ Populates the object references by using the currently set SDKs.
  * Returns
    * `string[]` - An array of all the error descriptions. Returns an empty array if no errors are found.
 
-Checks the setup for errors and creates an array of error descriptions. The returned error descriptions handle the following cases for the current SDK infos:  * Its type doesn't exist anymore.  * It's a fallback SDK.  * It doesn't have its scripting define symbols added.  * It's missing its vendor SDK.Additionally the current SDK infos are checked whether they use multiple VR Devices.
+The GetSimplifiedErrorDescriptions method checks the setup for errors and creates an array of error descriptions. The returned error descriptions handle the following cases for the current SDK infos:  * Its type doesn't exist anymore.  * It's a fallback SDK.  * It doesn't have its scripting define symbols added.  * It's missing its vendor SDK.Additionally the current SDK infos are checked whether they use multiple VR Devices.
+
+#### OnLoaded/1
+
+  > `public void OnLoaded(VRTK_SDKManager sender)`
+
+ * Parameters
+   * `VRTK_SDKManager sender` - The SDK Manager that has loaded the SDK Setup.
+ * Returns
+   * _none_
+
+The OnLoaded method determines when an SDK Setup has been loaded.
+
+#### OnUnloaded/1
+
+  > `public void OnUnloaded(VRTK_SDKManager sender)`
+
+ * Parameters
+   * `VRTK_SDKManager sender` - The SDK Manager that has unloaded the SDK Setup.
+ * Returns
+   * _none_
+
+The OnUnloaded method determines when an SDK Setup has been unloaded.
 
 ---
 
@@ -9798,7 +9948,8 @@ The SetStateByControllerReference method sets the object state based on the cont
 Provides the ability to switch button mappings based on the current SDK or controller type
 
 **Script Usage:**
- * Place the `VRTK_PlayerClimb` script on any active scene GameObject.
+ * Place the `VRTK_SDKInputOverride` script on any active scene GameObject.
+ * Customise the input button for each script type for each SDK controller type.
 
 ### Inspector Parameters
 

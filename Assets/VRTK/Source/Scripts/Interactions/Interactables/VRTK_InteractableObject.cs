@@ -160,10 +160,6 @@ namespace VRTK
         [Tooltip("An array of colliders on the GameObject to ignore when being touched.")]
         public Collider[] ignoredColliders;
 
-        [System.Obsolete("`VRTK_InteractableObject.touchHighlightColor` has been replaced with `VRTK_InteractObjectHighlighter.touchHighlight`. This parameter will be removed in a future version of VRTK.")]
-        [ObsoleteInspector]
-        public Color touchHighlightColor = Color.clear;
-
         [Header("Grab Settings")]
 
         [Tooltip("Determines if the Interactable Object can be grabbed.")]
@@ -198,11 +194,14 @@ namespace VRTK
         [Tooltip("Determines which controller can initiate a use action.")]
         public AllowedController allowedUseControllers = AllowedController.Both;
 
-        [Header("Custom Settings")]
+        [Header("Obsolete Settings")]
 
         [System.Obsolete("`VRTK_InteractableObject.objectHighlighter` has been replaced with `VRTK_InteractObjectHighlighter.objectHighlighter`. This parameter will be removed in a future version of VRTK.")]
         [ObsoleteInspector]
         public Highlighters.VRTK_BaseHighlighter objectHighlighter;
+        [System.Obsolete("`VRTK_InteractableObject.touchHighlightColor` has been replaced with `VRTK_InteractObjectHighlighter.touchHighlight`. This parameter will be removed in a future version of VRTK.")]
+        [ObsoleteInspector]
+        public Color touchHighlightColor = Color.clear;
 
         protected Rigidbody interactableRigidbody;
         protected HashSet<GameObject> currentIgnoredColliders = new HashSet<GameObject>();
@@ -635,7 +634,7 @@ namespace VRTK
         public virtual void Highlight(Color highlightColor)
         {
             VRTK_InteractObjectHighlighter interactObjectHighlighter = GetComponentInChildren<VRTK_InteractObjectHighlighter>();
-            if(interactObjectHighlighter != null)
+            if (interactObjectHighlighter != null)
             {
                 interactObjectHighlighter.Highlight(highlightColor);
             }
@@ -963,7 +962,7 @@ namespace VRTK
         public virtual void ResetIgnoredColliders()
         {
             //Go through all the existing set up ignored colliders and reset their collision state
-            foreach (GameObject currentIgnoredCollider in currentIgnoredColliders)
+            foreach (GameObject currentIgnoredCollider in new HashSet<GameObject>(currentIgnoredColliders))
             {
                 if (currentIgnoredCollider != null)
                 {
@@ -1375,7 +1374,7 @@ namespace VRTK
 
         protected virtual void StopTouchingInteractions()
         {
-            foreach (GameObject touchingObject in touchingObjects)
+            foreach (GameObject touchingObject in new HashSet<GameObject>(touchingObjects))
             {
                 if (touchingObject.activeInHierarchy || forceDisabled)
                 {
