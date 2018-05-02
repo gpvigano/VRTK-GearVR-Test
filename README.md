@@ -1,7 +1,13 @@
 # VRTK GearVR Test
+---
+## **Warning!** This repository is **no longer maintained**.
+
+### **Details below refer to an old version of VRTK** (3.3.0-alpha branch, January 2018).
+---
+
 This is a repository for testing **[Virtual Reality Toolkit (VRTK)](https://github.com/thestonefox/VRTK)** on GearVR (see VRTK description [below, in the next section](#VRTK)).
 
-**This is a totally separate repository and isn't representative of any work currently being carried out on VRTK, even if periodically the work done in VRTK is merged (and tested) into this repository.**
+**This is a totally separate repository and isn't representative of any work currently being carried out on VRTK.**
 
 Everything here **works with the GearVR D-Pad only**, it is designed just to
 enable a **gaze-based interaction** without a gamepad or controller.
